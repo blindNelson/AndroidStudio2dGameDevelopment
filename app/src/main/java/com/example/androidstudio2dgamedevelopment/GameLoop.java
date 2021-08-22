@@ -46,12 +46,12 @@ public class GameLoop extends Thread {
         startTime = System.currentTimeMillis();
         while (isRunning){
 
-
             //tentar renderizar e autualizar objetos
             try {
                 canvas = surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder){
                     game.update();
+                    updateCount++;
                     game.draw(canvas);
                 }
             }

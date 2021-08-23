@@ -9,14 +9,20 @@ import android.view.SurfaceView;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.androidstudio2dgamedevelopment.object.Circle;
 import com.example.androidstudio2dgamedevelopment.object.Enemy;
 import com.example.androidstudio2dgamedevelopment.object.Player;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private final Player player;
     private final Joystick joystick;
-    private final Enemy enemy;
+    private List<Enemy> enemyList = new ArrayList<Enemy>();
+
 
     /*
     * Classe Game controla todos os objetos no jogo e é responsavel por autualizar
@@ -33,7 +39,6 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
         joystick = new Joystick(100, 600, 70, 40);
         player = new Player(getContext(), joystick,2*500, 500, 30);
-        enemy = new Enemy(getContext(), player,500, 200, 30);
         this.gameLoop = new GameLoop(this, surfaceHolder);
 
         setFocusable(true);
@@ -81,19 +86,38 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        for(Enemy enemy : enemyList){
+            enemy.draw(canvas);
+        }
+
+        player.draw(canvas);
+        joystick.draw(canvas);
+
         drawUPS(canvas);
         drawFPS(canvas);
-        player.draw(canvas);
-        enemy.draw(canvas);
-        joystick.draw(canvas);
+
     }
 
     public void update() {
         //autualiza o jogo
+        joystick.upadate();
 
         player.update();
-        enemy.update();
-        joystick.upadate();
+        if(Enemy.readyToSpawn()){
+            enemyList.add(new Enemy(getContext(), player));
+        }
+
+        for (Enemy enemy : enemyList){
+            enemy.update();
+        }
+
+        Iterator<Enemy> iteratorEnemy = enemyList.iterator();
+        while (iteratorEnemy.hasNext()){
+            if(Circle.isColliding(iteratorEnemy.next(), player)){
+                iteratorEnemy.remove();
+            }
+        }
+
     }
 
     public void drawUPS(Canvas canvas){

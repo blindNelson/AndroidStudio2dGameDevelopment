@@ -11,11 +11,10 @@ import androidx.core.content.ContextCompat;
 
 
 
-
-
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private final Player player;
     private final Joystick joystick;
+    private final Enemy enemy;
 
     /*
     * Classe Game controla todos os objetos no jogo e é responsavel por autualizar
@@ -30,8 +29,9 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
 
-        player = new Player(getContext(), 500, 500, 30);
         joystick = new Joystick(100, 600, 70, 40);
+        player = new Player(getContext(), joystick,500, 500, 30);
+        enemy = new Enemy();
         this.gameLoop = new GameLoop(this, surfaceHolder);
 
         setFocusable(true);
@@ -88,7 +88,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     public void update() {
         //autualiza o jogo
 
-        player.update(joystick);
+        player.update();
         joystick.upadate();
     }
 

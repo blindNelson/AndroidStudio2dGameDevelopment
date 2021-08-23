@@ -6,9 +6,7 @@ import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 
@@ -17,6 +15,7 @@ import androidx.core.content.ContextCompat;
 
 public class Game extends SurfaceView implements SurfaceHolder.Callback {
     private final Player player;
+    private final Joystick joystick;
 
     /*
     * Classe Game controla todos os objetos no jogo e é responsavel por autualizar
@@ -32,6 +31,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         surfaceHolder.addCallback(this);
 
         player = new Player(getContext(), 500, 500, 30);
+        joystick = new Joystick(100, 600, 70, 40);
         this.gameLoop = new GameLoop(this, surfaceHolder);
 
         setFocusable(true);
@@ -42,10 +42,18 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                player.setPosition(event.getX(), event.getY());
+                if(joystick.isPressed(event.getX(), event.getY())){
+                    joystick.setIsPressed(true);
+                }
                 return true;
             case MotionEvent.ACTION_MOVE:
-                player.setPosition(event.getX(), event.getY());
+                if(joystick.getIsPressed()){
+                    joystick.setActuator(event.getX(), event.getY());
+                }
+                return true;
+            case MotionEvent.ACTION_UP:
+                joystick.setIsPressed(false);
+                joystick.resetActuator();
                 return true;
 
         }
@@ -68,34 +76,37 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
-    public void drawUPS(Canvas canvas){
-        String avarageUPS = Double.toString(gameLoop.getAvarageUPS());
-        Paint paint = new Paint();
-        int color = ContextCompat.getColor(super.getContext(), R.color.red);
-        paint.setColor(color);
-        paint.setTextSize(50);
-        canvas.drawText("UPS: " + avarageUPS,100, 80, paint);
-    }
-
-    public void drawFPS(Canvas canvas){
-        String avarageFPS = Double.toString(gameLoop.getAvarageFPS());
-        Paint paint = new Paint();
-        int color = ContextCompat.getColor(super.getContext(), R.color.red);
-        paint.setColor(color);
-        paint.setTextSize(50);
-        canvas.drawText("FPS: " + avarageFPS,100, 150, paint);
-    }
-
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
         drawUPS(canvas);
         drawFPS(canvas);
         player.draw(canvas);
+        joystick.draw(canvas);
     }
 
     public void update() {
         //autualiza o jogo
-        player.update();
+
+        player.update(joystick);
+        joystick.upadate();
+    }
+
+    public void drawUPS(Canvas canvas){
+        String avarageUPS = String.format("%,.2f",gameLoop.getAvarageUPS());
+        Paint paint = new Paint();
+        int color = ContextCompat.getColor(super.getContext(), R.color.red);
+        paint.setColor(color);
+        paint.setTextSize(25);
+        canvas.drawText("UPS: " + avarageUPS,50, 50, paint);
+    }
+
+    public void drawFPS(Canvas canvas){
+        String avarageFPS = String.format("%,.2f",gameLoop.getAvarageFPS());
+        Paint paint = new Paint();
+        int color = ContextCompat.getColor(super.getContext(), R.color.red);
+        paint.setColor(color);
+        paint.setTextSize(25);
+        canvas.drawText("FPS: " + avarageFPS,50, 100, paint);
     }
 }

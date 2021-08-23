@@ -10,5 +10,6 @@
     <color name="red">#FF0900</color>
     <color name="player">#008577</color>
     <color name="enemy">#FF6200EE</color>
+    <color name="spell">#FF9400</color>
 
 </resources>

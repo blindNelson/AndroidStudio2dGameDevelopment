@@ -68,7 +68,7 @@ public class Joystick {
     }
 
     public boolean isPressed(double touchPositionX, double touchPositionY) {
-        joystickCenterToTouchDistance = pitagoras(
+        joystickCenterToTouchDistance = Utils.pitagoras(
                     outerCircleCenterPositionX - touchPositionX,
                     outerCircleCenterPositionY - touchPositionY
                 );
@@ -86,7 +86,7 @@ public class Joystick {
     public void setActuator(double touchPositionX, double touchPositionY) {
         double deltaX = touchPositionX - outerCircleCenterPositionX;
         double deltaY = touchPositionY - outerCircleCenterPositionY;
-        double deltaDistance = pitagoras(deltaX, deltaY);
+        double deltaDistance = Utils.pitagoras(deltaX, deltaY);
 
         if(deltaDistance < outerCircleRadius){
             actuatorX = deltaX/outerCircleRadius;
@@ -96,10 +96,6 @@ public class Joystick {
             actuatorX = deltaX/deltaDistance;
             actuatorY = deltaY/deltaDistance;
         }
-    }
-
-    private double pitagoras(double a, double b) {
-        return Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
     }
 
     public void resetActuator() {

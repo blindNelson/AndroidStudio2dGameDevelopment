@@ -119,6 +119,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
         drawUPS(canvas);
         drawFPS(canvas);
+        drawPLP(canvas);
 
     }
 
@@ -148,6 +149,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
             Circle enemy = iteratorEnemy.next();
             if(Circle.isColliding(enemy, player)){
                 iteratorEnemy.remove();
+                player.setHealthPoints(player.getHealthPoints() - 1);
                 continue;
             }
 
@@ -180,5 +182,14 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         paint.setColor(color);
         paint.setTextSize(25);
         canvas.drawText("FPS: " + avarageFPS,50, 100, paint);
+    }
+
+    public void drawPLP(Canvas canvas){
+        String avaragePLP = String.format("%,.2f",player.getHealthPoints());
+        Paint paint = new Paint();
+        int color = ContextCompat.getColor(super.getContext(), R.color.red);
+        paint.setColor(color);
+        paint.setTextSize(50);
+        canvas.drawText("PLP: " + avaragePLP,100, 150, paint);
     }
 }

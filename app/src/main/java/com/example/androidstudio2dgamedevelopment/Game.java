@@ -9,6 +9,9 @@ import android.view.SurfaceView;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.androidstudio2dgamedevelopment.gameLabels.GameOver;
+import com.example.androidstudio2dgamedevelopment.gameLabels.Joystick;
+import com.example.androidstudio2dgamedevelopment.gameLabels.Performance;
 import com.example.androidstudio2dgamedevelopment.object.Circle;
 import com.example.androidstudio2dgamedevelopment.object.Enemy;
 import com.example.androidstudio2dgamedevelopment.object.Player;
@@ -34,6 +37,8 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
     private GameLoop gameLoop;
     private int numberOfSpellsToCast = 0;
+    private GameOver gameOver;
+    private Performance performance;
 
     public Game(Context context) {
         super(context);
@@ -41,6 +46,10 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
 
+        // initialize game labels
+        gameOver = new GameOver(getContext());
+
+        // initialize game objects
         joystick = new Joystick(100, 600, 70, 40);
         player = new Player(getContext(), joystick,2*500, 500, 30);
         this.gameLoop = new GameLoop(this, surfaceHolder);
@@ -107,6 +116,7 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+
         for(Enemy enemy : enemyList){
             enemy.draw(canvas);
         }
@@ -119,11 +129,22 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
 
         drawUPS(canvas);
         drawFPS(canvas);
-        drawPLP(canvas);
 
+        // Draw gameover if the player is dead
+        if(player.getHealthPoints()<=0){
+            gameOver.draw(canvas);
+        }
+        performance.draw(canvas);
+        
     }
 
     public void update() {
+
+        //parar de atualizar o jogo se o Player morreu
+        if(player.getHealthPoints()<=0){
+            return;
+        }
+
         //autualiza o jogo
         joystick.upadate();
         player.update();
@@ -182,14 +203,5 @@ public class Game extends SurfaceView implements SurfaceHolder.Callback {
         paint.setColor(color);
         paint.setTextSize(25);
         canvas.drawText("FPS: " + avarageFPS,50, 100, paint);
-    }
-
-    public void drawPLP(Canvas canvas){
-        String avaragePLP = String.format("%,.2f",player.getHealthPoints());
-        Paint paint = new Paint();
-        int color = ContextCompat.getColor(super.getContext(), R.color.red);
-        paint.setColor(color);
-        paint.setTextSize(50);
-        canvas.drawText("PLP: " + avaragePLP,100, 150, paint);
     }
 }

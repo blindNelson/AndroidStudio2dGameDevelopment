@@ -1,8 +1,10 @@
-package com.example.androidstudio2dgamedevelopment;
+package com.example.androidstudio2dgamedevelopment.gameLabels;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+
+import com.example.androidstudio2dgamedevelopment.Utils;
 
 public class Joystick {
 

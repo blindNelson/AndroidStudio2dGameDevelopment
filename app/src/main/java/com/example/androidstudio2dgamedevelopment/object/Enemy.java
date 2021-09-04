@@ -1,22 +1,27 @@
 package com.example.androidstudio2dgamedevelopment.object;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Canvas;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.androidstudio2dgamedevelopment.GameDisplay;
 import com.example.androidstudio2dgamedevelopment.GameLoop;
 import com.example.androidstudio2dgamedevelopment.R;
+import com.example.androidstudio2dgamedevelopment.graphics.Sprite;
 
 public class Enemy extends Circle {
 
 
     private static final double SPEED_PIXELS_PER_SECOND = Player.SPEED_PIXELS_PER_SECOND*0.6;
     private static final double MAX_SPEED = SPEED_PIXELS_PER_SECOND / GameLoop.MAX_UPS;
-    private static final double SPAWN_PER_MINUTE = 100;
+    private static final double SPAWN_PER_MINUTE = 1000;
     private static final double SPAWNS_PER_SECOND = SPAWN_PER_MINUTE/60.0;
     private static final double UPDATES_PER_SECOND = GameLoop.MAX_UPS/SPAWNS_PER_SECOND;
     private static double updatesUntilNextSpawn;
     private Player player;
+    private Sprite sprite;
 
     public Enemy(Context context, Player player , double positionX, double positionY, double radius) {
         super(context, ContextCompat.getColor(context, R.color.enemy), positionX, positionY, radius);
@@ -24,7 +29,7 @@ public class Enemy extends Circle {
         this.player = player;
     }
 
-    public Enemy(Context context, Player player) {
+    public Enemy(Context context, Player player, Sprite sprite) {
         super(
             context,
             ContextCompat.getColor(context, R.color.enemy),
@@ -33,6 +38,7 @@ public class Enemy extends Circle {
             30
         );
         this.player = player;
+        this.sprite = sprite;
     }
 
     public static boolean readyToSpawn() {
@@ -43,6 +49,14 @@ public class Enemy extends Circle {
             updatesUntilNextSpawn --;
             return false;
         }
+    }
+
+    public void draw(Canvas canvas, GameDisplay gameDisplay){
+        sprite.draw(
+                canvas,
+                (int) gameDisplay.gameToDisplayCoordinateX(getPositionX()),
+                (int) gameDisplay.gameToDisplayCoordinateY(getPositionY())
+        );
     }
 
     @Override

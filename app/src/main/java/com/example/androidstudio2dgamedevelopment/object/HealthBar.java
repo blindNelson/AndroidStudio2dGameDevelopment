@@ -6,6 +6,7 @@ import android.graphics.Paint;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.androidstudio2dgamedevelopment.GameDisplay;
 import com.example.androidstudio2dgamedevelopment.R;
 
 public class HealthBar {
@@ -34,7 +35,7 @@ public class HealthBar {
         healthPaint.setColor(healthColor);
     }
 
-    public void draw(Canvas canvas){
+    public void draw(Canvas canvas, GameDisplay gameDisplay){
         float x = (float)player.getPositionX();
         float y = (float)player.getPositionY();
         float distanceToPlayer = 30;
@@ -46,7 +47,14 @@ public class HealthBar {
         borderRight = x+width/2;
         borderBottom = y - distanceToPlayer;
         borderTop = borderBottom - height;
-        canvas.drawRect(borderLeft, borderTop, borderRight, borderBottom, borderPaint);
+
+        canvas.drawRect(
+                (float) gameDisplay.gameToDisplayCoordinateX(borderLeft),
+                (float) gameDisplay.gameToDisplayCoordinateY(borderTop),
+                (float) gameDisplay.gameToDisplayCoordinateX(borderRight),
+                (float) gameDisplay.gameToDisplayCoordinateY(borderBottom),
+                borderPaint
+        );
 
         //desenhar vida
         float healthLeft, healthTop, healthRight, healthBottom, healthWidth, healthHeight;
@@ -57,6 +65,12 @@ public class HealthBar {
         healthBottom = borderBottom - margin;
         healthTop = healthBottom - healthHeight;
 
-        canvas.drawRect(healthLeft, healthTop, healthRight, healthBottom, healthPaint);
+        canvas.drawRect(
+                (float) gameDisplay.gameToDisplayCoordinateX(healthLeft),
+                (float) gameDisplay.gameToDisplayCoordinateY(healthTop),
+                (float) gameDisplay.gameToDisplayCoordinateX(healthRight),
+                (float) gameDisplay.gameToDisplayCoordinateY(healthBottom),
+                healthPaint
+        );
     }
 }
